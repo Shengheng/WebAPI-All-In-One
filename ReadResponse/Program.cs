@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using HtmlAgilityPack;
 using System.Net.Http.Headers;
 
+//base URI --> https://api.walletinsights.com
+
 namespace ReadResponse
 {
     class Program
@@ -14,10 +16,12 @@ namespace ReadResponse
 
         static void Main(string[] args)
         {
+            Console.WriteLine("service list: ");
             GetUrls();
-            foreach (var item in urlsList)
+            Console.WriteLine("----------------------");
+            foreach (var url in urlsList)
             {
-                GetResponse(item).Wait();
+                GetResponse(url).Wait();
             }
            // GetResponse().Wait();
             Console.WriteLine(count);
@@ -30,6 +34,7 @@ namespace ReadResponse
             HtmlDocument doc = new HtmlDocument();
 
             doc = hw.Load("https://api.walletinsights.com");
+       
             foreach (HtmlNode item in doc.DocumentNode.SelectNodes("//a[@href]"))
             {
                 string hrefValue = item.GetAttributeValue("href", string.Empty);
@@ -54,6 +59,9 @@ namespace ReadResponse
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsStringAsync();
+
+                    //Console.WriteLine("{0} --- {1}", urlAppend, result);
+
                     if (String.Equals(result,"\"pong\""))
                     {
                         count++;
